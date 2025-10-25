@@ -10,10 +10,8 @@ import { TechGadget } from '@/components/tech-gadget';
 import { SportsHub } from '@/components/sports-hub';
 import { DailyMaple } from '@/components/daily-maple';
 import { FeaturedArticles } from '@/components/featured-articles';
-import { CategoryGrid } from '@/components/category-grid';
 import { WorldNews } from '@/components/world-news';
 import { BookNook } from '@/components/booknook';
-import { TheFridayPost } from '@/components/the-friday-post';
 import { Footer } from '@/components/footer';
 import { Continent } from '@/components/continent';
 import { 
@@ -23,7 +21,6 @@ import {
   getFeaturedArticles,
   getYouMayHaveMissed,
   getBookNook,
-  getTheFridayPost,
   getPosts,
   transformPost,
   getPostsByCategory,
@@ -80,7 +77,6 @@ async function getHomePageData() {
       techGadget,
       sportsHub,
       bookNook,
-      theFridayPost,
       heroArticles,
       africaNews,
       americasNews,
@@ -102,7 +98,6 @@ async function getHomePageData() {
       getPostsByCategory('tech-gadget', 20).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('sports', 20).then(posts => posts.map(transformPost).filter(Boolean)),
       getBookNook(20),
-      getTheFridayPost(20),
       getPosts({ per_page: 9, _embed: true }).then(posts => posts.map(transformPost).filter(Boolean)),
       getAfricaNews(20),
       getAmericasNews(20),
@@ -134,7 +129,6 @@ async function getHomePageData() {
       techGadget: techGadget.status === 'fulfilled' ? techGadget.value : [],
       sportsHub: sportsHub.status === 'fulfilled' ? sportsHub.value : [],
       bookNook: bookNook.status === 'fulfilled' ? bookNook.value : [],
-      theFridayPost: theFridayPost.status === 'fulfilled' ? theFridayPost.value : [],
       heroArticles: combinedHeroArticles.length > 0 ? combinedHeroArticles : (heroArticles.status === 'fulfilled' ? (heroArticles.value || []) : []),
       africaNews: africaNews.status === 'fulfilled' ? africaNews.value : [],
       americasNews: americasNews.status === 'fulfilled' ? americasNews.value : [],
@@ -158,7 +152,6 @@ async function getHomePageData() {
       techGadget: [],
       sportsHub: [],
       bookNook: [],
-      theFridayPost: [],
       heroArticles: [],
       africaNews: [],
       americasNews: [],
@@ -209,10 +202,6 @@ export default async function Home() {
             <DailyMaple articles={data.dailyMaple} />
             <FeaturedArticles articles={data.featuredArticles} />
             <BookNook articles={data.bookNook} />
-            <TheFridayPost articles={data.theFridayPost} />
-            <div className="mt-16">
-              <CategoryGrid />
-            </div>
           </div>
         </div>
       </main>

@@ -131,9 +131,6 @@ export function Header() {
             <Link href="/lifestyle" className="text-gray-700 dark:text-gray-300 hover:text-red-600 transition-colors">
               News
             </Link>
-            <Link href="/the-friday-post" className="text-gray-700 dark:text-gray-300 hover:text-red-600 transition-colors">
-              The Friday Post
-            </Link>
 
             {/* Education Dropdown */}
             <DropdownMenu>
@@ -324,9 +321,6 @@ export function Header() {
               </Link>
               <Link href="/lifestyle" className="text-gray-700 dark:text-gray-300 hover:text-red-600 transition-colors">
                 News
-              </Link>
-              <Link href="/the-friday-post" className="text-gray-700 dark:text-gray-300 hover:text-red-600 transition-colors">
-                The Friday Post
               </Link>
               
               {/* Education Section with Collapsible Subsections */}
