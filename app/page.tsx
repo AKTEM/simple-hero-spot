@@ -2,14 +2,14 @@ import { Header } from '@/components/header';
 import { HeroSection } from '@/components/hero-section';
 import { LatestHeadlines } from '@/components/latest-headlines';
 import { EditorsPicks } from '@/components/editors-picks';
-import { YouMayHaveMissed } from '@/components/you-may-have-missed';
+import { VibesNCruise } from '@/components/vibes-n-cruise';
 import { JapaRoutes } from '@/components/japa-routes';
 import { LifeAfterJapa } from '@/components/life-after-japa';
 import { HealthHub } from '@/components/health-hub';
 import { TechGadget } from '@/components/tech-gadget';
 import { SportsHub } from '@/components/sports-hub';
 import { DailyMaple } from '@/components/daily-maple';
-import { FeaturedArticles } from '@/components/featured-articles';
+
 import { WorldNews } from '@/components/world-news';
 import { BookNook } from '@/components/booknook';
 import { Footer } from '@/components/footer';
@@ -18,8 +18,6 @@ import {
   getLatestHeadlines,
   getEditorsPicks,
   getDailyMaple,
-  getFeaturedArticles,
-  getYouMayHaveMissed,
   getBookNook,
   getPosts,
   transformPost,
@@ -69,13 +67,12 @@ async function getHomePageData() {
       latestHeadlines,
       editorsPicks,
       dailyMaple,
-      featuredArticles,
-      youMayHaveMissed,
       japaRoutes,
       lifeAfterJapa,
       healthHub,
       techGadget,
       sportsHub,
+      vibesNCruise,
       bookNook,
       heroArticles,
       africaNews,
@@ -90,13 +87,12 @@ async function getHomePageData() {
       getLatestHeadlines(3),
       editorsPicksPromise,
       getDailyMaple(20),
-      getFeaturedArticles(20),
-      getYouMayHaveMissed(20),
       getPostsByCategory('japa-routes', 20).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('life-after-japa', 20).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('health', 20).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('tech-gadget', 20).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('sports', 20).then(posts => posts.map(transformPost).filter(Boolean)),
+      getPostsByCategory('vibes-n-cruise', 20).then(posts => posts.map(transformPost).filter(Boolean)),
       getBookNook(20),
       getPosts({ per_page: 9, _embed: true }).then(posts => posts.map(transformPost).filter(Boolean)),
       getAfricaNews(20),
@@ -121,13 +117,12 @@ async function getHomePageData() {
       latestHeadlines: latestHeadlines.status === 'fulfilled' ? latestHeadlines.value : [],
       editorsPicks: editorsPicks.status === 'fulfilled' ? editorsPicks.value : [],
       dailyMaple: dailyMaple.status === 'fulfilled' ? dailyMaple.value : [],
-      featuredArticles: featuredArticles.status === 'fulfilled' ? featuredArticles.value : [],
-      youMayHaveMissed: youMayHaveMissed.status === 'fulfilled' ? youMayHaveMissed.value : [],
       japaRoutes: japaRoutes.status === 'fulfilled' ? japaRoutes.value : [],
       lifeAfterJapa: lifeAfterJapa.status === 'fulfilled' ? lifeAfterJapa.value : [],
       healthHub: healthHub.status === 'fulfilled' ? healthHub.value : [],
       techGadget: techGadget.status === 'fulfilled' ? techGadget.value : [],
       sportsHub: sportsHub.status === 'fulfilled' ? sportsHub.value : [],
+      vibesNCruise: vibesNCruise.status === 'fulfilled' ? vibesNCruise.value : [],
       bookNook: bookNook.status === 'fulfilled' ? bookNook.value : [],
       heroArticles: combinedHeroArticles.length > 0 ? combinedHeroArticles : (heroArticles.status === 'fulfilled' ? (heroArticles.value || []) : []),
       africaNews: africaNews.status === 'fulfilled' ? africaNews.value : [],
@@ -144,13 +139,12 @@ async function getHomePageData() {
       latestHeadlines: [],
       editorsPicks: [],
       dailyMaple: [],
-      featuredArticles: [],
-      youMayHaveMissed: [],
       japaRoutes: [],
       lifeAfterJapa: [],
       healthHub: [],
       techGadget: [],
       sportsHub: [],
+      vibesNCruise: [],
       bookNook: [],
       heroArticles: [],
       africaNews: [],
@@ -198,9 +192,8 @@ export default async function Home() {
       <TechGadget articles={data.techGadget} />
       <SportsHub articles={data.sportsHub} />
       <EditorsPicks articles={data.editorsPicks} />
-            <YouMayHaveMissed articles={data.youMayHaveMissed} />
+      <VibesNCruise articles={data.vibesNCruise} />
             <DailyMaple articles={data.dailyMaple} />
-            <FeaturedArticles articles={data.featuredArticles} />
             <BookNook articles={data.bookNook} />
           </div>
         </div>

@@ -432,7 +432,7 @@ export function Header() {
                       className="block text-gray-700 dark:text-gray-300 hover:text-red-600 transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Maple Travel
+                    Vibes N cruise
                     </Link>
                     <Link 
                       href="/through-the-lens" 
