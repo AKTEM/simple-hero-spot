@@ -18,7 +18,7 @@ async function registerUser({ username, email, password }: {
   password: string;
 }) {
   try {
-    const siteUrl = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://mapleepoch.com';
+    const siteUrl = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com';
     const res = await fetch(`${siteUrl}/wp-json/custom/v1/register`, {
       method: 'POST',
       headers: {
@@ -93,7 +93,7 @@ export default function SignUpPage() {
                   Create Account
                 </h1>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">
-                  Join The Maple Epoch community
+                  Join EmyTrends community
                 </p>
               </div>
 

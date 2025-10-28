@@ -17,12 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const yoastData = await getCategoryYoastSEO('health');
     return yoastToNextMetadata(
       yoastData,
-      'Health - The Maple Epoch',
+      'Health - EmyTrends',
       'Stay informed about health news, medical breakthroughs, wellness tips, and healthcare developments that matter to you.'
     );
   } catch (error) {
     console.error('Error generating health metadata:', error);
-    return yoastToNextMetadata(null, 'Health - The Maple Epoch', 'Stay informed about health news, medical breakthroughs, wellness tips, and healthcare developments that matter to you.');
+    return yoastToNextMetadata(null, 'Health - EmyTrends', 'Stay informed about health news, medical breakthroughs, wellness tips, and healthcare developments that matter to you.');
   }
 }
 

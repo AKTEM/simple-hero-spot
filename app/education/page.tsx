@@ -17,21 +17,21 @@ import {
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title: 'Education - The Maple Epoch',
+  title: 'Education - EmyTrends',
   description: 'Explore educational opportunities, study abroad programs, academic insights, and learning resources from institutions worldwide.',
   alternates: {
-    canonical: 'https://www.mapleepoch.com/world',
+    canonical: 'https://www.emytrends.com/education',
   },
   openGraph: {
-    title: 'Education - The Maple Epoch',
+    title: 'Education - EmyTrends',
     description: 'Explore educational opportunities, study abroad programs, academic insights, and learning resources from institutions worldwide.',
-    url: 'https://www.mapleepoch.com/world',
-    siteName: 'The Maple Epoch',
+    url: 'https://www.emytrends.com/education',
+    siteName: 'EmyTrends',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Education - The Maple Epoch',
+    title: 'Education - EmyTrends',
     description: 'Explore educational opportunities, study abroad programs, academic insights, and learning resources from institutions worldwide.',
   },
 };

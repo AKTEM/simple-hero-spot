@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const yoastData = await getHomepageYoastSEO();
     return yoastToNextMetadata(
       yoastData,
-      'The Maple Epoch - Breaking News & Latest Updates',
+      'EmyTrends - Breaking News & Latest Updates',
       'Stay informed with real-time coverage of breaking news, politics, business, technology, health, sports, and entertainment.'
     );
   } catch (error) {

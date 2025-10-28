@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
     try {
       // Use force=true to permanently delete the post
-      const siteUrl = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://mapleepoch.com';
+      const siteUrl = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com';
       const response = await fetch(`${siteUrl}/wp-json/wp/v2/posts/${postId}?force=true`, {
         method: 'DELETE',
         headers: {

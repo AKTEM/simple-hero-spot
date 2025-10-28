@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
     try {
       // In a real implementation, this would call your WordPress password reset endpoint
       // For now, we'll simulate the process
-      const siteUrl = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://mapleepoch.com';
+      const siteUrl = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com';
       const response = await fetch(`${siteUrl}/wp-json/bdpwr/v1/reset-password`, {
         method: 'POST',
         headers: {

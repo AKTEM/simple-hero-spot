@@ -21,9 +21,9 @@ export const metadata: Metadata = {
   },
   // Global metadata that applies to all pages unless overridden
   keywords: 'news, breaking news, politics, business, technology, health, sports, entertainment, world news',
-  authors: [{ name: 'The Maple Epoch Editorial Team' }],
-  creator: 'The Maple Epoch',
-  publisher: 'The Maple Epoch',
+  authors: [{ name: 'EmyTrends Editorial Team' }],
+  creator: 'EmyTrends',
+  publisher: 'EmyTrends',
 };
 
 export default function RootLayout({

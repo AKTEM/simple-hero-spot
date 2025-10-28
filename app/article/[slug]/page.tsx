@@ -41,11 +41,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const article = await getArticleData(params.slug);
     
     if (!article) {
-      return generateFallbackMetadata('Article Not Found - The Maple Epoch', 'The requested article could not be found.', params.slug);
+      return generateFallbackMetadata('Article Not Found - EmyTrends', 'The requested article could not be found.', params.slug);
     }
 
     // Generate fallback metadata from post data
-    const title = article.title || 'The Maple Epoch';
+    const title = article.title || 'EmyTrends';
     const description = article.excerpt || 'Breaking news and latest updates';
     
     return generateFallbackMetadata(title, description, params.slug);

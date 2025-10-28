@@ -17,12 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const yoastData = await getCategoryYoastSEO('japa-routes');
     return yoastToNextMetadata(
       yoastData,
-      'Japa Routes - The Maple Epoch',
+      'Japa Routes - EmyTrends',
       'Discover pathways, opportunities, and essential information for those planning to relocate abroad. Your complete guide to Japa routes.'
     );
   } catch (error) {
     console.error('Error generating japa routes metadata:', error);
-    return yoastToNextMetadata(null, 'Japa Routes - The Maple Epoch', 'Discover pathways, opportunities, and essential information for those planning to relocate abroad. Your complete guide to Japa routes.');
+    return yoastToNextMetadata(null, 'Japa Routes - EmyTrends', 'Discover pathways, opportunities, and essential information for those planning to relocate abroad. Your complete guide to Japa routes.');
   }
 }
 

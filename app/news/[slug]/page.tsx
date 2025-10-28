@@ -5,8 +5,8 @@ import { Metadata } from 'next';
 import { getPostYoastSEO, yoastToNextMetadata, generateFallbackMetadata } from '@/lib/yoast-seo';
 import { processContentForGallery, validateImages } from '@/lib/image-parser';
 
-const API_URL = 'https://api.mapleepoch.com/wp-json/wp/v2';
-const FRONTEND_URL = 'https://www.mapleepoch.com';
+const API_URL = 'https://cms.emytrends.com/wp/wp-json/wp/v2';
+const FRONTEND_URL = 'https://www.emytrends.com';
 
 interface WordPressPost {
   id: number;
@@ -114,11 +114,11 @@ export async function generateMetadata({ params }: NewsPageProps): Promise<Metad
     const post = await getPostData(params.slug);
     
     if (!post) {
-      return generateFallbackMetadata('Article Not Found - The Maple Epoch', 'The requested article could not be found.', params.slug);
+      return generateFallbackMetadata('Article Not Found - EmyTrends', 'The requested article could not be found.', params.slug);
     }
 
     // Generate fallback metadata from post data
-    const title = post.title?.rendered || 'The Maple Epoch';
+    const title = post.title?.rendered || 'EmyTrends';
     const description = post.excerpt?.rendered?.replace(/<[^>]*>/g, '').trim() || 'Breaking news and latest updates';
     
     return generateFallbackMetadata(title, description, params.slug);
@@ -203,11 +203,11 @@ function generateFallbackSchema(post: WordPressPost, slug: string) {
     "dateModified": modifiedDate,
     "author": {
       "@type": "Organization",
-      "name": post._embedded?.author?.[0]?.name || "The Maple Epoch"
+      "name": post._embedded?.author?.[0]?.name || "EmyTrends"
     },
     "publisher": {
       "@type": "Organization",
-      "name": "The Maple Epoch",
+      "name": "EmyTrends",
       "url": FRONTEND_URL,
       "logo": {
         "@type": "ImageObject",

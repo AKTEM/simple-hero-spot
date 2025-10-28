@@ -17,12 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const yoastData = await getCategoryYoastSEO('tech-gadget');
     return yoastToNextMetadata(
       yoastData,
-      'Tech/Gadget - The Maple Epoch',
+      'Tech/Gadget - EmyTrends',
       'Stay updated with the latest technology news, gadget reviews, tech trends, innovations, and digital developments.'
     );
   } catch (error) {
     console.error('Error generating tech gadget metadata:', error);
-    return yoastToNextMetadata(null, 'Tech/Gadget - The Maple Epoch', 'Stay updated with the latest technology news, gadget reviews, tech trends, innovations, and digital developments.');
+    return yoastToNextMetadata(null, 'Tech/Gadget - EmyTrends', 'Stay updated with the latest technology news, gadget reviews, tech trends, innovations, and digital developments.');
   }
 }
 

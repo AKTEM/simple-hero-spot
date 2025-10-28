@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   title: 'About Us - Emytrends',
   description: 'Learn about Emytrends, our mission, values, and commitment to delivering accurate, unbiased, and comprehensive news coverage.',
   alternates: {
-    canonical: 'https://www.mapleepoch.com/about',
+    canonical: 'https://www.emytrends.com/about',
   },
   openGraph: {
     title: 'About Us - Emytrends',
     description: 'Learn about Emytrends, our mission, values, and commitment to delivering accurate, unbiased, and comprehensive news coverage.',
-    url: 'https://www.mapleepoch.com/about',
+    url: 'https://www.emytrends.com/about',
     siteName: 'Emytrends',
     type: 'website',
   },

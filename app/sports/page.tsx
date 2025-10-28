@@ -17,12 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const yoastData = await getCategoryYoastSEO('sports');
     return yoastToNextMetadata(
       yoastData,
-      'Sports - The Maple Epoch',
+      'Sports - EmyTrends',
       'Get the latest sports news, game results, player updates, and athletic achievements from around the world.'
     );
   } catch (error) {
     console.error('Error generating sports metadata:', error);
-    return yoastToNextMetadata(null, 'Sports - The Maple Epoch', 'Get the latest sports news, game results, player updates, and athletic achievements from around the world.');
+    return yoastToNextMetadata(null, 'Sports - EmyTrends', 'Get the latest sports news, game results, player updates, and athletic achievements from around the world.');
   }
 }
 

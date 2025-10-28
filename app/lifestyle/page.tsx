@@ -17,12 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const yoastData = await getCategoryYoastSEO('news');
     return yoastToNextMetadata(
       yoastData,
-      'News - The Maple Epoch',
+      'News - EmyTrends',
       'Stay informed with the latest news, current events, breaking stories, and comprehensive coverage from around the world.'
     );
   } catch (error) {
     console.error('Error generating news metadata:', error);
-    return yoastToNextMetadata(null, 'News - The Maple Epoch', 'Stay informed with the latest news, current events, breaking stories, and comprehensive coverage from around the world.');
+    return yoastToNextMetadata(null, 'News - EmyTrends', 'Stay informed with the latest news, current events, breaking stories, and comprehensive coverage from around the world.');
   }
 }
 

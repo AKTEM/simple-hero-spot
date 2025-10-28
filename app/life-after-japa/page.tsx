@@ -17,12 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const yoastData = await getCategoryYoastSEO('life-after-japa');
     return yoastToNextMetadata(
       yoastData,
-      'Life After Japa - The Maple Epoch',
+      'Life After Japa - EmyTrends',
       'Navigate life abroad with confidence. Stories, tips, and insights on settling in, career growth, and thriving after relocation.'
     );
   } catch (error) {
     console.error('Error generating life after japa metadata:', error);
-    return yoastToNextMetadata(null, 'Life After Japa - The Maple Epoch', 'Navigate life abroad with confidence. Stories, tips, and insights on settling in, career growth, and thriving after relocation.');
+    return yoastToNextMetadata(null, 'Life After Japa - EmyTrends', 'Navigate life abroad with confidence. Stories, tips, and insights on settling in, career growth, and thriving after relocation.');
   }
 }
 
