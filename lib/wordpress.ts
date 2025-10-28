@@ -120,50 +120,70 @@ export interface TransformedPost {
   tags: string[];
 }
 
-// Cache for API responses - TEMPORARILY DISABLED
-// const cache = new Map();
-// const CACHE_DURATION = 60 * 1000; // Cache for 1 minute
+import { apiQueue } from './api-queue';
+
+// In-memory cache with Next.js ISR support
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // Cache for 5 minutes
 
 async function fetchWithCache(url: string, options?: RequestInit) {
-  // CACHING TEMPORARILY DISABLED
-  // const cacheKey = url + JSON.stringify(options);
-  // const cached = cache.get(cacheKey);
+  const cacheKey = url + JSON.stringify(options);
+  const cached = cache.get(cacheKey);
 
-  // if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-  //   return cached.data;
-  // }
-
-  try {
-    console.log('Fetching WordPress API:', url);
-
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
-      cache: 'no-store', // Disable Next.js caching
-      // next: { revalidate: 60 }, // Cache for 60 seconds - DISABLED
-    });
-
-    console.log('WordPress API response status:', response.status, response.statusText);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`HTTP error! status: ${response.status} for URL: ${url}`, errorText);
-      return [];
-    }
-
-    const data = await response.json();
-    console.log('WordPress API data received:', Array.isArray(data) ? `${data.length} items` : typeof data);
-
-    // CACHING TEMPORARILY DISABLED
-    // cache.set(cacheKey, { data, timestamp: Date.now() });
-    return data;
-  } catch (error) {
-    console.error('WordPress API fetch error for URL:', url, error);
-    return [];
+  // Return cached data if still valid
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    console.log('Returning cached data for:', url);
+    return cached.data;
   }
+
+  // Use queue to throttle requests
+  return apiQueue.add(async () => {
+    try {
+      console.log('Fetching WordPress API:', url);
+
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options?.headers,
+        },
+        next: { 
+          revalidate: 300, // Cache for 5 minutes with ISR
+          tags: ['wordpress-api']
+        },
+      });
+
+      console.log('WordPress API response status:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP error! status: ${response.status} for URL: ${url}`, errorText);
+        
+        // Throw error with status for retry logic
+        const error: any = new Error(`HTTP ${response.status}`);
+        error.status = response.status;
+        throw error;
+      }
+
+      const data = await response.json();
+      console.log('WordPress API data received:', Array.isArray(data) ? `${data.length} items` : typeof data);
+
+      // Cache the response
+      cache.set(cacheKey, { data, timestamp: Date.now() });
+      return data;
+    } catch (error: any) {
+      console.error('WordPress API fetch error for URL:', url, error);
+      
+      // Return cached data if available, even if expired
+      if (cached) {
+        console.log('Returning stale cached data due to error');
+        return cached.data;
+      }
+      
+      // Re-throw to allow retry logic in queue
+      throw error;
+    }
+  });
 }
 
 export async function getPosts(params: {
@@ -219,7 +239,7 @@ export async function getCategories(): Promise<WordPressCategory[]> {
   return safeAsync(() => fetchWithCache(url), []);
 }
 
-export async function getPostsByCategory(categorySlug: string, limit?: number): Promise<WordPressPost[]> {
+export async function getPostsByCategory(categorySlug: string, limit: number = 10): Promise<WordPressPost[]> {
   try {
     const categories = await getCategories();
     const category = categories.find(cat => cat.slug === categorySlug);
@@ -229,43 +249,13 @@ export async function getPostsByCategory(categorySlug: string, limit?: number): 
       return [];
     }
 
-    if (limit !== undefined) {
-      return getPosts({
-        categories: category.id.toString(),
-        per_page: limit,
-        _embed: true,
-        status: 'publish'
-      });
-    }
-
-    const allPosts: WordPressPost[] = [];
-    let page = 1;
-    const perPage = 100;
-    let hasMore = true;
-
-    while (hasMore) {
-      const posts = await getPosts({
-        categories: category.id.toString(),
-        per_page: perPage,
-        page: page,
-        _embed: true,
-        status: 'publish'
-      });
-
-      if (posts.length === 0) {
-        hasMore = false;
-      } else {
-        allPosts.push(...posts);
-        if (posts.length < perPage) {
-          hasMore = false;
-        } else {
-          page++;
-        }
-      }
-    }
-
-    console.log(`Fetched ${allPosts.length} posts for category ${categorySlug}`);
-    return allPosts;
+    // Always respect the limit to avoid fetching too many posts
+    return getPosts({
+      categories: category.id.toString(),
+      per_page: limit,
+      _embed: true,
+      status: 'publish'
+    });
   } catch (error) {
     console.error(`Error fetching posts for category ${categorySlug}:`, error);
     return [];
@@ -338,25 +328,25 @@ export async function getLatestHeadlines(limit: number = 3): Promise<Transformed
 export async function getEditorsPicks(limit: number = 3): Promise<TransformedPost[]> {
   try {
     // First try to get posts from "editors-picks" category
-    const editorsPosts = await getPostsByCategory('editors-picks', Math.max(limit, 20));
+    const editorsPosts = await getPostsByCategory('editors-picks', limit);
     if (editorsPosts.length > 0) {
       return editorsPosts.map(post => ({ ...transformPost(post), featured: true }));
     }
     
     // If no editors-picks category, try "editor-picks" (alternative slug)
-    const editorPicksPosts = await getPostsByCategory('editor-picks', Math.max(limit, 20));
+    const editorPicksPosts = await getPostsByCategory('editor-picks', limit);
     if (editorPicksPosts.length > 0) {
       return editorPicksPosts.map(post => ({ ...transformPost(post), featured: true }));
     }
     
     // Try sticky posts as fallback
-    const stickyPosts = await getPosts({ per_page: Math.max(limit, 20), _embed: true, sticky: true, status: 'publish' });
+    const stickyPosts = await getPosts({ per_page: limit, _embed: true, sticky: true, status: 'publish' });
     if (stickyPosts.length > 0) {
       return stickyPosts.map(post => ({ ...transformPost(post), featured: true }));
     }
     
     // If still no posts, get recent posts and mark them as featured
-    const recentPosts = await getPosts({ per_page: Math.max(limit, 20), _embed: true, status: 'publish' });
+    const recentPosts = await getPosts({ per_page: limit, _embed: true, status: 'publish' });
     return recentPosts.map(post => ({ ...transformPost(post), featured: true }));
   } catch (error) {
     console.error('Error fetching editor\'s picks:', error);
@@ -365,78 +355,78 @@ export async function getEditorsPicks(limit: number = 3): Promise<TransformedPos
 }
 
 // Section-specific functions
-export async function getDailyMaple(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('business-economy', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getDailyMaple(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('business-economy', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getMapleTravel(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('vibes-n-cruise', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getMapleTravel(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('vibes-n-cruise', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getThroughTheLens(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('through-the-lens', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getThroughTheLens(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('through-the-lens', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getFeaturedArticles(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('featured-articles', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getFeaturedArticles(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('featured-articles', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getMapleVoices(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('maple-voices', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getMapleVoices(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('maple-voices', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getExploreCanada(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('explore-canada', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getExploreCanada(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('explore-canada', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getResources(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('resources', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getResources(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('resources', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getEvents(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('events', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getEvents(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('events', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getContinent(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('continent', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getContinent(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('continent', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getCanadaNews(limit: number = 1): Promise<TransformedPost[]> {
-  return getPostsByCategory('canada', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getCanadaNews(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('canada', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getYouMayHaveMissed(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('you-may-have-missed', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getYouMayHaveMissed(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('you-may-have-missed', limit).then(posts => posts.map(transformPost));
 }
 
 // World News functions for specific regions (now Education categories)
-export async function getAfricaNews(limit: number = 1): Promise<TransformedPost[]> {
-  return getPostsByCategory('academics', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getAfricaNews(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('academics', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getAmericasNews(limit: number = 1): Promise<TransformedPost[]> {
-  return getPostsByCategory('migration', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getAmericasNews(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('migration', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getAustraliaNews(limit: number = 1): Promise<TransformedPost[]> {
-  return getPostsByCategory('exam-admission', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getAustraliaNews(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('exam-admission', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getAsiaNews(limit: number = 1): Promise<TransformedPost[]> {
-  return getPostsByCategory('learning-career-guide', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getAsiaNews(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('learning-career-guide', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getEuropeNews(limit: number = 1): Promise<TransformedPost[]> {
-  return getPostsByCategory('scholarships', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getEuropeNews(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('scholarships', limit).then(posts => posts.map(transformPost));
 }
 
-export async function getUKNews(limit: number = 1): Promise<TransformedPost[]> {
-  return getPostsByCategory('student-life', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getUKNews(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('student-life', limit).then(posts => posts.map(transformPost));
 }
 
 // BookNook and Lifestyle Wire functions
-export async function getBookNook(limit: number = 3): Promise<TransformedPost[]> {
-  return getPostsByCategory('finance', Math.max(limit, 20)).then(posts => posts.map(transformPost));
+export async function getBookNook(limit: number = 10): Promise<TransformedPost[]> {
+  return getPostsByCategory('finance', limit).then(posts => posts.map(transformPost));
 }
 
 export async function getTheFridayPost(limit?: number): Promise<TransformedPost[]> {

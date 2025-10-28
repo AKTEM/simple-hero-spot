@@ -33,8 +33,9 @@ import {
 import { getHomepageYoastSEO, yoastToNextMetadata } from '@/lib/yoast-seo';
 import { Metadata } from 'next';
 
-// ISR: Revalidate every 10 minutes
-export const revalidate = 600;
+// ISR: Revalidate every 15 minutes (900 seconds)
+// Increased from 10 minutes to reduce backend load
+export const revalidate = 900;
 
 // Generate metadata using Yoast SEO
 export async function generateMetadata(): Promise<Metadata> {
@@ -53,16 +54,48 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function getHomePageData() {
   try {
-    // Fetch articles from specific categories for hero section
-    const targetCategories = ['politics', 'business', 'technology', 'news', 'sports', 'entertainment', 'japa-routes', 'life-after-japa', 'tech-gadget', 'vibes-n-cruise'];
-    const heroArticlesPromises = targetCategories.map(category => 
-      getPostsByCategory(category, 3).then(posts => posts.map(transformPost).filter(Boolean))
-    );
+    // OPTIMIZED: Sequential batched fetching to prevent overwhelming WordPress backend
+    // Reduced post limits from 20 to 10 per category
     
-    // Get Editor's Picks from WordPress (sticky posts)
-    const editorsPicksPromise = getEditorsPicks(3);
-    
-    const [
+    // Batch 1: Critical above-the-fold content (hero + headlines)
+    const [latestHeadlines, heroArticles] = await Promise.all([
+      getLatestHeadlines(5),
+      getPosts({ per_page: 9, _embed: true }).then(posts => posts.map(transformPost).filter(Boolean)),
+    ]);
+
+    // Batch 2: Primary sections
+    const [editorsPicks, businessEconomy, japaRoutes, lifeAfterJapa] = await Promise.all([
+      getEditorsPicks(6),
+      getDailyMaple(10),
+      getPostsByCategory('japa-routes', 10).then(posts => posts.map(transformPost).filter(Boolean)),
+      getPostsByCategory('life-after-japa', 10).then(posts => posts.map(transformPost).filter(Boolean)),
+    ]);
+
+    // Batch 3: Secondary sections
+    const [healthHub, techGadget, sportsHub, vibesNCruise] = await Promise.all([
+      getPostsByCategory('health', 10).then(posts => posts.map(transformPost).filter(Boolean)),
+      getPostsByCategory('tech-gadget', 10).then(posts => posts.map(transformPost).filter(Boolean)),
+      getPostsByCategory('sports', 10).then(posts => posts.map(transformPost).filter(Boolean)),
+      getPostsByCategory('vibes-n-cruise', 10).then(posts => posts.map(transformPost).filter(Boolean)),
+    ]);
+
+    // Batch 4: Education categories (lower priority)
+    const [academics, migration, examAdmission, learningCareer] = await Promise.all([
+      getAfricaNews(10),
+      getAmericasNews(10),
+      getAustraliaNews(10),
+      getAsiaNews(10),
+    ]);
+
+    // Batch 5: Remaining categories
+    const [scholarships, studentLife, canadaNews, finance] = await Promise.all([
+      getEuropeNews(10),
+      getUKNews(10),
+      getCanadaNews(10),
+      getBookNook(10),
+    ]);
+
+    return {
       latestHeadlines,
       editorsPicks,
       businessEconomy,
@@ -81,56 +114,6 @@ async function getHomePageData() {
       scholarships,
       studentLife,
       canadaNews,
-      ...categoryArticles
-    ] = await Promise.allSettled([
-      getLatestHeadlines(3),
-      editorsPicksPromise,
-      getDailyMaple(20),
-      getPostsByCategory('japa-routes', 20).then(posts => posts.map(transformPost).filter(Boolean)),
-      getPostsByCategory('life-after-japa', 20).then(posts => posts.map(transformPost).filter(Boolean)),
-      getPostsByCategory('health', 20).then(posts => posts.map(transformPost).filter(Boolean)),
-      getPostsByCategory('tech-gadget', 20).then(posts => posts.map(transformPost).filter(Boolean)),
-      getPostsByCategory('sports', 20).then(posts => posts.map(transformPost).filter(Boolean)),
-      getPostsByCategory('vibes-n-cruise', 20).then(posts => posts.map(transformPost).filter(Boolean)),
-      getBookNook(20),
-      getPosts({ per_page: 9, _embed: true }).then(posts => posts.map(transformPost).filter(Boolean)),
-      getAfricaNews(20),
-      getAmericasNews(20),
-      getAustraliaNews(20),
-      getAsiaNews(20),
-      getEuropeNews(20),
-      getUKNews(20),
-      getCanadaNews(20),
-      ...heroArticlesPromises
-    ]);
-
-    // Combine articles from all target categories for hero section
-    const combinedHeroArticles: TransformedPost[] = [];
-    categoryArticles.forEach(result => {
-      if (result.status === 'fulfilled') {
-        combinedHeroArticles.push(...(result.value || []).filter(Boolean));
-      }
-    });
-
-    return {
-      latestHeadlines: latestHeadlines.status === 'fulfilled' ? latestHeadlines.value : [],
-      editorsPicks: editorsPicks.status === 'fulfilled' ? editorsPicks.value : [],
-      businessEconomy: businessEconomy.status === 'fulfilled' ? businessEconomy.value : [],
-      japaRoutes: japaRoutes.status === 'fulfilled' ? japaRoutes.value : [],
-      lifeAfterJapa: lifeAfterJapa.status === 'fulfilled' ? lifeAfterJapa.value : [],
-      healthHub: healthHub.status === 'fulfilled' ? healthHub.value : [],
-      techGadget: techGadget.status === 'fulfilled' ? techGadget.value : [],
-      sportsHub: sportsHub.status === 'fulfilled' ? sportsHub.value : [],
-      vibesNCruise: vibesNCruise.status === 'fulfilled' ? vibesNCruise.value : [],
-      finance: finance.status === 'fulfilled' ? finance.value : [],
-      heroArticles: combinedHeroArticles.length > 0 ? combinedHeroArticles : (heroArticles.status === 'fulfilled' ? (heroArticles.value || []) : []),
-      academics: academics.status === 'fulfilled' ? academics.value : [],
-      migration: migration.status === 'fulfilled' ? migration.value : [],
-      examAdmission: examAdmission.status === 'fulfilled' ? examAdmission.value : [],
-      learningCareer: learningCareer.status === 'fulfilled' ? learningCareer.value : [],
-      scholarships: scholarships.status === 'fulfilled' ? scholarships.value : [],
-      studentLife: studentLife.status === 'fulfilled' ? studentLife.value : [],
-      canadaNews: canadaNews.status === 'fulfilled' ? canadaNews.value : [],
     };
   } catch (error) {
     console.error('Error fetching homepage data:', error);
