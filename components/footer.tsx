@@ -40,13 +40,12 @@ export function Footer() {
             <h4 className="text-lg font-semibold mb-4 text-red-500">Quick Links</h4>
             <ul className="space-y-2">
               <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/politics" className="text-gray-400 hover:text-white transition-colors">Japa Routes</Link></li>
-              <li><Link href="/business" className="text-gray-400 hover:text-white transition-colors">  Life After Japa</Link></li>
+              <li><Link href="/japa-routes" className="text-gray-400 hover:text-white transition-colors">Japa Routes</Link></li>
+              <li><Link href="/life-after-japa" className="text-gray-400 hover:text-white transition-colors">Life After Japa</Link></li>
               <li><Link href="/health" className="text-gray-400 hover:text-white transition-colors">Health</Link></li>
-              <li><Link href="/entertainment" className="text-gray-400 hover:text-white transition-colors">Tech/Gadget</Link></li>
+              <li><Link href="/tech-gadget" className="text-gray-400 hover:text-white transition-colors">Tech/Gadget</Link></li>
               <li><Link href="/sports" className="text-gray-400 hover:text-white transition-colors">Sports</Link></li>
-              <li><Link href="/lifestyle" className="text-gray-400 hover:text-white transition-colors">News</Link></li>
-              {/* <li><Link href="/the-friday-post" className="text-gray-400 hover:text-white transition-colors">The Friday Post</Link></li> */}
+              <li><Link href="/news" className="text-gray-400 hover:text-white transition-colors">News</Link></li>
               <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
             </ul>
           </div>
@@ -55,12 +54,12 @@ export function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4 text-red-500">Beyond the Headlines</h4>
             <ul className="space-y-2">
-              <li><Link href="/world/africa" className="text-gray-400 hover:text-white transition-colors">Academics</Link></li>
-              <li><Link href="/world/australia" className="text-gray-400 hover:text-white transition-colors">Exam/Admission</Link></li>
-              <li><Link href="/daily-maple" className="text-gray-400 hover:text-white transition-colors">Business/Economy</Link></li>
-              <li><Link href="/maple-travel" className="text-gray-400 hover:text-white transition-colors">Vibes N Cruise</Link></li>
-              <li><Link href="/booknook" className="text-gray-400 hover:text-white transition-colors">Finance</Link></li>
-              <li><Link href="/world/uk" className="text-gray-400 hover:text-white transition-colors">Student Life</Link></li>
+              <li><Link href="/education/academics" className="text-gray-400 hover:text-white transition-colors">Academics</Link></li>
+              <li><Link href="/education/exam-admission" className="text-gray-400 hover:text-white transition-colors">Exam/Admission</Link></li>
+              <li><Link href="/business-economy" className="text-gray-400 hover:text-white transition-colors">Business/Economy</Link></li>
+              <li><Link href="/vibesncruise" className="text-gray-400 hover:text-white transition-colors">Vibes N Cruise</Link></li>
+              <li><Link href="/finance" className="text-gray-400 hover:text-white transition-colors">Finance</Link></li>
+              <li><Link href="/education/student-life" className="text-gray-400 hover:text-white transition-colors">Student Life</Link></li>
             </ul>
           </div>
 
