@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Clock, Eye, User, Music, ChevronDown, ChevronUp } from 'lucide-react';
+import { Clock, Eye, User, Laugh, ChevronDown, ChevronUp } from 'lucide-react';
 import { TransformedPost } from '@/lib/wordpress';
 
 interface VibesNCruiseProps {
@@ -18,7 +18,7 @@ export function VibesNCruise({ articles }: VibesNCruiseProps) {
   return (
     <section className="space-y-8">
       <div className="flex items-center space-x-3">
-        <Music className="w-8 h-8 text-purple-600" />
+        <Laugh className="w-8 h-8 text-purple-600" />
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Vibes N Cruise
         </h2>
@@ -27,7 +27,7 @@ export function VibesNCruise({ articles }: VibesNCruiseProps) {
 
       <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 rounded-xl p-6 mb-8">
         <div className="text-center">
-          <Music className="w-12 h-12 text-purple-600 mx-auto mb-3" />
+          <Laugh className="w-12 h-12 text-purple-600 mx-auto mb-3" />
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
           Stay tuned for premium cruise moments!
           </h3>
@@ -54,7 +54,7 @@ export function VibesNCruise({ articles }: VibesNCruiseProps) {
               
               <div className="absolute top-3 left-3 flex space-x-2">
                 <Badge className="bg-purple-600 hover:bg-purple-700 text-white">
-                  <Music className="w-3 h-3 mr-1" />
+                  <Laugh className="w-3 h-3 mr-1" />
                   VIBES N CRUISE
                 </Badge>
               </div>

@@ -3,15 +3,15 @@
 import Link from 'next/link';
 import { 
   Zap, 
-  Clock, 
-  Globe, 
+  Plane, 
+  Trophy, 
   MapPin, 
-  Grid3X3, 
-  Calendar, 
-  Leaf, 
-  BookOpen, 
-  Camera, 
-  Headphones,
+  HeartPulse, 
+  GraduationCap, 
+  Smartphone, 
+  DollarSign, 
+  Briefcase, 
+  BookOpen,
   Facebook,
   Twitter,
   Instagram,
@@ -30,14 +30,14 @@ const newsFeatures = [
   {
     id: 2,
     title: "Life After Japa",
-    icon: Clock,
+    icon: Plane,
     href: "/business",
     description: "Abroad: Stories & Tips"
   },
   {
     id: 3,
     title: "Sports",
-    icon: Globe,
+    icon: Trophy,
     href: "/sports",
     description: "Sport Activities"
   },
@@ -51,42 +51,42 @@ const newsFeatures = [
   {
     id: 5,
     title: "Health",
-    icon: Grid3X3,
+    icon: HeartPulse,
     href: "/health",
     description: "Wellness & Healthy Living"
   },
   {
     id: 6,
     title: "Education",
-    icon: Calendar,
+    icon: GraduationCap,
     href: "/events",
     description: "Upcoming events"
   },
   {
     id: 7,
     title: "Tech/Gadget",
-    icon: Leaf,
+    icon: Smartphone,
     href: "/entertainment",
     description: "Tech News, Gadget Reviews"
   },
   {
     id: 8,
     title: "Finance",
-    icon: BookOpen,
+    icon: DollarSign,
     href: "/booknook",
     description: "Money talks & Investment"
   },
   {
     id: 9,
     title: "Business/Economy",
-    icon: Camera,
+    icon: Briefcase,
     href: "/daily-maple",
     description: "Business & Economy"
   },
   {
     id: 10,
     title: "Academics",
-    icon: Headphones,
+    icon: BookOpen,
     href: "/world/africa",
     description: "Educational Content"
   }
