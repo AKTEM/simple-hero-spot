@@ -56,44 +56,48 @@ async function getHomePageData() {
   try {
     // OPTIMIZED: Sequential batched fetching to prevent overwhelming WordPress backend
     // Reduced post limits from 20 to 10 per category
+    // Each batch is wrapped in error handling to ensure partial data loads
     
     // Batch 1: Critical above-the-fold content (hero + headlines)
-    const [latestHeadlines, heroArticles] = await Promise.all([
+    const [latestHeadlines, heroArticles] = await Promise.allSettled([
       getLatestHeadlines(5),
       getPosts({ per_page: 9, _embed: true }).then(posts => posts.map(transformPost).filter(Boolean)),
+    ]).then(results => [
+      results[0].status === 'fulfilled' ? results[0].value : [],
+      results[1].status === 'fulfilled' ? results[1].value : [],
     ]);
 
     // Batch 2: Primary sections
-    const [editorsPicks, businessEconomy, japaRoutes, lifeAfterJapa] = await Promise.all([
+    const [editorsPicks, businessEconomy, japaRoutes, lifeAfterJapa] = await Promise.allSettled([
       getEditorsPicks(6),
       getDailyMaple(10),
       getPostsByCategory('japa-routes', 10).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('life-after-japa', 10).then(posts => posts.map(transformPost).filter(Boolean)),
-    ]);
+    ]).then(results => results.map(r => r.status === 'fulfilled' ? r.value : []));
 
     // Batch 3: Secondary sections
-    const [healthHub, techGadget, sportsHub, vibesNCruise] = await Promise.all([
+    const [healthHub, techGadget, sportsHub, vibesNCruise] = await Promise.allSettled([
       getPostsByCategory('health', 10).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('tech-gadget', 10).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('sports', 10).then(posts => posts.map(transformPost).filter(Boolean)),
       getPostsByCategory('vibes-n-cruise', 10).then(posts => posts.map(transformPost).filter(Boolean)),
-    ]);
+    ]).then(results => results.map(r => r.status === 'fulfilled' ? r.value : []));
 
     // Batch 4: Education categories (lower priority)
-    const [academics, migration, examAdmission, learningCareer] = await Promise.all([
+    const [academics, migration, examAdmission, learningCareer] = await Promise.allSettled([
       getAfricaNews(10),
       getAmericasNews(10),
       getAustraliaNews(10),
       getAsiaNews(10),
-    ]);
+    ]).then(results => results.map(r => r.status === 'fulfilled' ? r.value : []));
 
     // Batch 5: Remaining categories
-    const [scholarships, studentLife, canadaNews, finance] = await Promise.all([
+    const [scholarships, studentLife, canadaNews, finance] = await Promise.allSettled([
       getEuropeNews(10),
       getUKNews(10),
       getCanadaNews(10),
       getBookNook(10),
-    ]);
+    ]).then(results => results.map(r => r.status === 'fulfilled' ? r.value : []));
 
     return {
       latestHeadlines,

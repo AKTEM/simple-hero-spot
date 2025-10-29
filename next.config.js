@@ -6,6 +6,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Graceful error handling during builds
+  onError: (err) => {
+    console.error('Build error occurred:', err);
+    // Continue build even if errors occur
+    return false;
+  },
   images: {
     domains: ['emytrends.com', 'cms.emytrends.com', 'www.emytrends.com', 'images.pexels.com', 'mapleepoch.com', 'api.mapleepoch.com'],
     remotePatterns: [

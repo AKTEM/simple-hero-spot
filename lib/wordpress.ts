@@ -132,14 +132,18 @@ async function fetchWithCache(url: string, options?: RequestInit) {
 
   // Return cached data if still valid
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log('Returning cached data for:', url);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Returning cached data for:', url);
+    }
     return cached.data;
   }
 
   // Use queue to throttle requests
   return apiQueue.add(async () => {
     try {
-      console.log('Fetching WordPress API:', url);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Fetching WordPress API:', url);
+      }
 
       const response = await fetch(url, {
         ...options,
@@ -153,11 +157,19 @@ async function fetchWithCache(url: string, options?: RequestInit) {
         },
       });
 
-      console.log('WordPress API response status:', response.status, response.statusText);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('WordPress API response status:', response.status, response.statusText);
+      }
 
       if (!response.ok) {
+        // For 508 errors, return cached data immediately without logging verbosely
+        if (response.status === 508 && cached) {
+          console.warn('WordPress backend overloaded (508), using cached data');
+          return cached.data;
+        }
+        
         const errorText = await response.text();
-        console.error(`HTTP error! status: ${response.status} for URL: ${url}`, errorText);
+        console.error(`HTTP error! status: ${response.status} for URL: ${url}`);
         
         // Throw error with status for retry logic
         const error: any = new Error(`HTTP ${response.status}`);
@@ -166,7 +178,9 @@ async function fetchWithCache(url: string, options?: RequestInit) {
       }
 
       const data = await response.json();
-      console.log('WordPress API data received:', Array.isArray(data) ? `${data.length} items` : typeof data);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('WordPress API data received:', Array.isArray(data) ? `${data.length} items` : typeof data);
+      }
 
       // Cache the response
       cache.set(cacheKey, { data, timestamp: Date.now() });

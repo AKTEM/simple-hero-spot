@@ -53,11 +53,19 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Search API error:', error);
     
+    // Return graceful error response without breaking the UI
     return NextResponse.json({ 
       posts: [], 
       total: 0, 
-      error: 'Search failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+      error: 'Search temporarily unavailable',
+      details: process.env.NODE_ENV === 'development' 
+        ? (error instanceof Error ? error.message : 'Unknown error')
+        : undefined
+    }, { 
+      status: 200, // Return 200 to prevent UI breaks, with empty results
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      }
+    });
   }
 }
