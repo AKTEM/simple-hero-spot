@@ -24,14 +24,14 @@ const newsFeatures = [
     id: 1,
     title: "Breaking News",
     icon: Zap,
-    href: "/lifestyle",
+    href: "/news",
     description: "Latest Breaking News"
   },
   {
     id: 2,
     title: "Life After Japa",
     icon: Plane,
-    href: "/business",
+    href: "/life-after-japa",
     description: "Abroad: Stories & Tips"
   },
   {
@@ -45,7 +45,7 @@ const newsFeatures = [
     id: 4,
     title: "Japa Routes",
     icon: MapPin,
-    href: "/politics",
+    href: "/japa-routes",
     description: "Your Guide to International Migration"
   },
   {
@@ -59,35 +59,35 @@ const newsFeatures = [
     id: 6,
     title: "Education",
     icon: GraduationCap,
-    href: "/events",
-    description: "Upcoming events"
+    href: "/education",
+    description: "Education & Learning"
   },
   {
     id: 7,
     title: "Tech/Gadget",
     icon: Smartphone,
-    href: "/entertainment",
+    href: "/tech-gadget",
     description: "Tech News, Gadget Reviews"
   },
   {
     id: 8,
     title: "Finance",
     icon: DollarSign,
-    href: "/booknook",
+    href: "/finance",
     description: "Money talks & Investment"
   },
   {
     id: 9,
     title: "Business/Economy",
     icon: Briefcase,
-    href: "/daily-maple",
+    href: "/business-economy",
     description: "Business & Economy"
   },
   {
     id: 10,
     title: "Academics",
     icon: BookOpen,
-    href: "/world/africa",
+    href: "/education/academics",
     description: "Educational Content"
   }
 ];

@@ -175,18 +175,17 @@ export function HeroSection({ articles }: HeroSectionProps) {
                   )}
                   <Badge className="bg-white text-black">{mainArticle.category}</Badge>
                 </div>
-                <div className="absolute bottom-0 p-6 text-white">
-                  {/* ✅ Responsive title text size */}
-                  <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-2">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
+                  <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold mb-3 line-clamp-2 pr-2">
                     {mainArticle.title}
                   </h2>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1"><User className="w-4 h-4" />{mainArticle.author}</span>
-                      <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{mainArticle.readTime}</span>
-                      <span className="flex items-center gap-1"><Eye className="w-4 h-4" />{mainArticle.views}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                      <span className="flex items-center gap-1"><User className="w-3 h-3 sm:w-4 sm:h-4" />{mainArticle.author}</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3 sm:w-4 sm:h-4" />{mainArticle.readTime}</span>
+                      <span className="flex items-center gap-1"><Eye className="w-3 h-3 sm:w-4 sm:h-4" />{mainArticle.views}</span>
                     </div>
-                    <Button asChild className="bg-red-600 hover:bg-red-700 text-white px-3 py-1">
+                    <Button asChild className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm w-full sm:w-auto">
                       <Link href={`/article/${mainArticle.slug}`}>Read More</Link>
                     </Button>
                   </div>
