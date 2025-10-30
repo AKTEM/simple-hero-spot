@@ -18,8 +18,12 @@ export async function GET(request: NextRequest) {
 
     console.log('Search API called with:', { query, page, perPage });
 
-    // Call the WordPress API with search parameters
-    const wordpressPosts = await getPosts({
+    // Call the WordPress API with search parameters with timeout
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout')), 15000);
+    });
+
+    const searchPromise = getPosts({
       search: query.trim(),
       per_page: perPage,
       page: page,
@@ -27,10 +31,19 @@ export async function GET(request: NextRequest) {
       status: 'publish'
     });
 
+    const wordpressPosts = await Promise.race([
+      searchPromise,
+      timeoutPromise
+    ]) as any[];
+
     console.log('WordPress API response:', {
-      postsCount: wordpressPosts.length,
+      postsCount: wordpressPosts?.length || 0,
       query: query.trim()
     });
+
+    if (!wordpressPosts || !Array.isArray(wordpressPosts)) {
+      throw new Error('Invalid response from WordPress API');
+    }
 
     // Transform posts to our frontend format
     const transformedPosts = wordpressPosts
@@ -48,6 +61,10 @@ export async function GET(request: NextRequest) {
       query: query.trim(),
       page,
       perPage
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      }
     });
 
   } catch (error) {
@@ -57,7 +74,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ 
       posts: [], 
       total: 0, 
-      error: 'Search temporarily unavailable',
+      error: 'Search temporarily unavailable. Please try again.',
       details: process.env.NODE_ENV === 'development' 
         ? (error instanceof Error ? error.message : 'Unknown error')
         : undefined
@@ -69,3 +86,6 @@ export async function GET(request: NextRequest) {
     });
   }
 }
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

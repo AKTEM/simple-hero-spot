@@ -176,7 +176,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
                   <Badge className="bg-white text-black">{mainArticle.category}</Badge>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
-                  <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold mb-3 line-clamp-2 pr-2">
+                  <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-extrabold mb-3 line-clamp-2 pr-2 drop-shadow-lg">
                     {mainArticle.title}
                   </h2>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm">
