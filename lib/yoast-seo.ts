@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL?.replace('/wp/v2', '') || 'https://cms.emytrends.com/wp/wp-json';
+const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL?.replace('/wp/v2', '').replace('/wp-json', '') + '/wp-json' || 'https://cms.emytrends.com/wp-json';
 const FRONTEND_URL = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com';
 
 interface YoastSEOResponse {

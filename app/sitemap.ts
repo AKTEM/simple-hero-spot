@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
-const API_URL = process.env.WORDPRESS_API_URL || process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://cms.emytrends.com/wp/wp-json/wp/v2';
-const FRONTEND_URL = 'https://www.emytrends.com';
+const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://cms.emytrends.com/wp-json/wp/v2';
+const FRONTEND_URL = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com';
 
 interface WordPressPost {
   slug: string;

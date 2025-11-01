@@ -42,9 +42,9 @@ export default function robots(): MetadataRoute.Robots {
       }
     ],
     sitemap: [
-      'https://www.emytrends.com/sitemap.xml',
-      'https://www.emytrends.com/sitemap-news'
+      `${process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com'}/sitemap.xml`,
+      `${process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com'}/sitemap-news`
     ],
-    host: 'https://www.emytrends.com'
+    host: process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL || 'https://emytrends.com'
   };
 }
